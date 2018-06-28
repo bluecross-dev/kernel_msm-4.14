@@ -166,6 +166,8 @@ struct dsi_backlight_config {
 	bool bl_update_pending;
 	bool allow_bl_update;
 
+	/* Minimum safe brightness level during VR mode */
+	u32 bl_vr_min_safe_level;
 
 	struct hbm_data *hbm;
 
