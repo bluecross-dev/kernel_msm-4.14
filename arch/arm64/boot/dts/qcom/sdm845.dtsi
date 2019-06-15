@@ -2162,6 +2162,19 @@
 		};
 	};
 
+	apcs_glb: mailbox@17990000 {
+		compatible = "qcom,sm8150-apcs-hmss-global";
+		reg = <0x17990000 0x1000>;
+		#mbox-cells = <1>;
+	};
+
+	sp_scsr: mailbox@188501c {
+		compatible = "qcom,sm8150-spcs-global";
+		reg = <0x188501c 0x4>;
+
+		#mbox-cells = <1>;
+	};
+
 	tcsr_mutex_block: syscon@1f40000 {
 		compatible = "syscon";
 		reg = <0x1f40000 0x20000>;
@@ -2177,6 +2190,36 @@
 		compatible = "qcom,smem";
 		memory-region = <&smem_region>;
 		hwlocks = <&tcsr_mutex 3>;
+	};
+
+	sp_scsr_block: syscon@1880000 {
+		compatible = "syscon";
+		reg = <0x1880000 0x10000>;
+	};
+
+	intsp: qcom,qsee_irq {
+		compatible = "qcom,sm8150-qsee-irq";
+
+		syscon = <&sp_scsr_block>;
+		interrupts = <0 348 IRQ_TYPE_LEVEL_HIGH>,
+			     <0 349 IRQ_TYPE_LEVEL_HIGH>;
+
+		interrupt-names = "sp_ipc0",
+				  "sp_ipc1";
+
+		interrupt-controller;
+		#interrupt-cells = <3>;
+	};
+
+	qcom,qsee_irq_bridge {
+		compatible = "qcom,qsee-ipc-irq-bridge";
+
+		qcom,qsee-ipc-irq-spss {
+			qcom,dev-name = "qsee_ipc_irq_spss";
+			interrupt-parent = <&intsp>;
+			interrupts = <0 349 4>;
+			label = "spss";
+		};
 	};
 
 	apcs: syscon@1799000c {
@@ -2226,12 +2269,6 @@
 	system_pm {
 		compatible = "qcom,system-pm";
 		mboxes = <&apps_rsc 0>;
-	};
-
-	apcs_glb: mailbox@17990000 {
-		compatible = "qcom,sm8150-apcs-hmss-global";
-		reg = <0x17990000 0x1000>;
-		#mbox-cells = <1>;
 	};
 
 	qcom,glink {
@@ -2467,44 +2504,6 @@
 				qcom,glink-channels = "DIAG_CMD";
 				qcom,intents = <0x4000 1 >;
 			};
-		};
-	};
-
-	sp_scsr: mailbox@188501c {
-		compatible = "qcom,sm8150-spcs-global";
-		reg = <0x188501c 0x4>;
-
-		#mbox-cells = <1>;
-	};
-
-	sp_scsr_block: syscon@1880000 {
-		compatible = "syscon";
-		reg = <0x1880000 0x10000>;
-	};
-
-	intsp: qcom,qsee_irq {
-		compatible = "qcom,sm8150-qsee-irq";
-
-		syscon = <&sp_scsr_block>;
-		interrupts = <0 348 IRQ_TYPE_LEVEL_HIGH>,
-			     <0 349 IRQ_TYPE_LEVEL_HIGH>;
-
-		interrupt-names = "sp_ipc0",
-				  "sp_ipc1";
-
-		interrupt-controller;
-		#interrupt-cells = <3>;
-	};
-
-
-	qcom,qsee_irq_bridge {
-		compatible = "qcom,qsee-ipc-irq-bridge";
-
-		qcom,qsee-ipc-irq-spss {
-			qcom,dev-name = "qsee_ipc_irq_spss";
-			interrupt-parent = <&intsp>;
-			interrupts = <0 349 4>;
-			label = "spss";
 		};
 	};
 
