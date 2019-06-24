@@ -1,5 +1,12 @@
 ifeq ($(CONFIG_BUILD_ARM64_DT_OVERLAY),y)
 
+dtbo-$(CONFIG_BOARD_B1C1) += \
+	sdm845-b1-dvt1.1.dtbo \
+	sdm845-c1-dvt1.1.dtbo
+
+sdm845-b1-dvt1.1.dtbo-base		:= qcom-base/sdm845-v2.1.dtb
+sdm845-c1-dvt1.1.dtbo-base		:= qcom-base/sdm845-v2.1.dtb
+
 dtbo-$(CONFIG_BOARD_FLORAL) += \
 	sm8150-floral-jaws-overlay.dtbo \
 	sm8150-coral-proto-overlay.dtbo \
