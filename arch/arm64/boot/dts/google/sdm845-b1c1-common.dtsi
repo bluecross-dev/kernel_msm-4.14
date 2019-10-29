@@ -230,3 +230,7 @@
 		};
 	};
 };
+
+&android_fstab {
+	status = "disabled";
+};
